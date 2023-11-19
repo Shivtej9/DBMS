@@ -1,0 +1,38 @@
+CREATE TABLE College_info (
+  college_code NUMBER PRIMARY KEY,
+  college_name VARCHAR2(100),
+  address VARCHAR2(255)
+);
+
+
+CREATE TABLE Faculty_info (
+  college_code NUMBER,
+  faculty_code NUMBER PRIMARY KEY,
+  faculty_name VARCHAR2(100),
+  qualification VARCHAR2(50),
+  experience_in_years NUMBER,
+  address VARCHAR2(255),
+  CONSTRAINT fk_college_code FOREIGN KEY (college_code) REFERENCES College_info(college_code)
+);
+
+
+
+INSERT INTO College_info (college_code, college_name, address)
+VALUES (1, 'ABC College', '123 Main Street, Cityville');
+
+-- Insert sample data into Faculty-info table
+INSERT INTO Faculty_info (college_code, faculty_code, faculty_name, qualification, experience_in_years, address)
+VALUES (1, 101, 'John Doe', 'M. Tech', 12, '456 Oak Street, Townsville');
+
+INSERT INTO Faculty_info (college_code, faculty_code, faculty_name, qualification, experience_in_years, address)
+VALUES (1, 102, 'Jane Smith', 'Ph.D.', 8, '789 Pine Street, Villagetown');
+
+
+SELECT *
+FROM Faculty_info
+WHERE experience_in_years >= 10 AND qualification = 'M. Tech';
+
+
+SELECT *
+FROM Faculty_info
+WHERE experience_in_years >= 10 AND qualification != 'M. Tech';

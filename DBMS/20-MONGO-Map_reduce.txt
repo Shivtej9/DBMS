@@ -1,0 +1,65 @@
+// Map function for gender count
+var mapGenderCount = function() {
+  emit(this.gender, 1);
+};
+
+// Reduce function for gender count
+var reduceGenderCount = function(key, values) {
+  return Array.sum(values);
+};
+
+
+// Insert sample values into the orders collection
+db.orders.insertMany([
+  {
+    cust_id: "abc123",
+    ord_date: new Date("Oct 04, 2012"),
+    status: 'A',
+    price: 25,
+    gender: 'F',
+    rating: 1
+  },
+  {
+    cust_id: "def456",
+    ord_date: new Date("Nov 15, 2012"),
+    status: 'A',
+    price: 30,
+    gender: 'M',
+    rating: 2
+  },
+  {
+    cust_id: "ghi789",
+    ord_date: new Date("Dec 20, 2012"),
+    status: 'B',
+    price: 40,
+    gender: 'F',
+    rating: 3
+  },
+  // Add more documents as needed
+]);
+
+print("Values inserted into the orders collection.");
+
+
+db.orders.mapReduce(
+  mapGenderCount,
+  reduceGenderCount,
+  { out: { inline: 1 }, query: { gender: { $exists: true } } }
+);
+
+// Map function for rating count
+var mapRatingCount = function() {
+  emit(this.rating, 1);
+};
+
+// Reduce function for rating count
+var reduceRatingCount = function(key, values) {
+  return Array.sum(values);
+};
+
+
+db.orders.mapReduce(
+  mapRatingCount,
+  reduceRatingCount,
+  { out: { inline: 1 }, query: { rating: { $exists: true } } }
+);

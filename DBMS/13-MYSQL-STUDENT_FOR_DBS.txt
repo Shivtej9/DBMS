@@ -1,0 +1,38 @@
+-- Create Student table
+CREATE TABLE Student (
+  roll_no INT PRIMARY KEY,
+  name VARCHAR(255),
+  subject_name VARCHAR(255),
+  subject_opted VARCHAR(255)
+);
+
+-- Create Subject table
+CREATE TABLE Subject (
+  faculty_code INT PRIMARY KEY,
+  faculty_name VARCHAR(255),
+  specialization VARCHAR(255)
+);
+
+-- Insert data into Student table
+INSERT INTO Student (roll_no, name, subject_name, subject_opted) VALUES
+(1, 'John Doe', 'DBMS', 'Database Management System'),
+(2, 'Jane Smith', 'Java', 'Java Programming'),
+(3, 'Bob Johnson', 'DBMS', 'Database Management System'),
+(4, 'Alice Williams', 'C++', 'C++ Programming');
+
+-- Insert data into Subject table
+INSERT INTO Subject (faculty_code, faculty_name, specialization) VALUES
+(101, 'Prof. Smith', 'Database Systems'),
+(102, 'Prof. Johnson', 'Software Engineering'),
+(103, 'Prof. Brown', 'Network Security');
+
+
+-- Query (i): Find the number of students who have enrolled for the subject "DBMS"
+SELECT COUNT(*) AS num_students_dbms
+FROM Student
+WHERE subject_name = 'DBMS';
+
+-- Query (ii): Find all those faculty members who have not offered any subject
+SELECT *
+FROM Subject
+WHERE faculty_code NOT IN (SELECT DISTINCT faculty_code FROM Student);

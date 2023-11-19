@@ -1,0 +1,46 @@
+-- Creating Student table
+CREATE TABLE Student (
+    `roll-no` INT PRIMARY KEY,
+    marks INT,
+    category VARCHAR(50),
+    district VARCHAR(100),
+    state VARCHAR(100)
+);
+
+-- Creating Student-rank table
+CREATE TABLE `Student-rank` (
+    `roll-no` INT PRIMARY KEY,
+    marks INT,
+    rank INT
+);
+
+-- Inserting 5 records into Student table
+INSERT INTO Student (`roll-no`, marks, category, district, state)
+VALUES
+    (1, 85, 'Category A', 'District X', 'Tamilnadu'),
+    (2, 92, 'Category B', 'District Y', 'Andhra Pradesh'),
+    (3, 78, 'Category C', 'District Z', 'Tamilnadu'),
+    (4, 95, 'Category A', 'District X', 'Andhra Pradesh'),
+    (5, 88, 'Category B', 'District Y', 'Tamilnadu');
+
+-- Inserting 5 records into Student-rank table
+INSERT INTO `Student-rank` (`roll-no`, marks, rank)
+VALUES
+    (1, 85, 110),
+    (2, 92, 90),
+    (3, 78, 120),
+    (4, 95, 105),
+    (5, 88, 115);
+
+SELECT s.*
+FROM Student s
+JOIN `Student-rank` sr ON s.`roll-no` = sr.`roll-no`
+WHERE s.state = 'Tamilnadu'
+AND sr.rank > 100;
+
+SELECT s.*
+FROM Student s
+JOIN `Student-rank` sr ON s.`roll-no` = sr.`roll-no`
+WHERE s.state = 'Andhra Pradesh'
+AND s.category = 'category B' 
+AND sr.rank > 100;

@@ -1,0 +1,42 @@
+-- Create College-info table
+CREATE TABLE College_info (
+  college_code INT PRIMARY KEY,
+  college_name VARCHAR(255),
+  address VARCHAR(255)
+);
+
+-- Create Faculty-info table
+CREATE TABLE Faculty_info (
+  faculty_code INT PRIMARY KEY,
+  college_code INT,
+  faculty_name VARCHAR(255),
+  qualification VARCHAR(50),
+  experience_in_years INT,
+  address VARCHAR(255),
+  FOREIGN KEY (college_code) REFERENCES College_info(college_code)
+);
+
+
+
+-- Insert data into College_info table
+INSERT INTO College_info (college_code, college_name, address) VALUES
+(1, 'ABC College', '123 Main Street'),
+(2, 'XYZ College', '456 Oak Avenue');
+
+-- Insert data into Faculty_info table
+INSERT INTO Faculty_info (faculty_code, college_code, faculty_name, qualification, experience_in_years, address) VALUES
+(101, 1, 'John Doe', 'M. Tech', 12, '789 Elm Street'),
+(102, 1, 'Jane Smith', 'Ph.D.', 8, '456 Pine Road'),
+(103, 2, 'Bob Johnson', 'M. Tech', 15, '987 Cedar Lane'),
+(104, 2, 'Alice Williams', 'Ph.D.', 10, '654 Birch Drive');
+
+-- Query (c): List all faculty members with at least 10 years of experience and M. Tech degree
+SELECT *
+FROM Faculty_info
+WHERE experience_in_years >= 10 AND qualification = 'M. Tech';
+
+-- Query (d): List all faculty members with at least 10 years of experience but without M. Tech degree
+SELECT *
+FROM Faculty_info
+WHERE experience_in_years >= 10 AND qualification != 'M. Tech';
+

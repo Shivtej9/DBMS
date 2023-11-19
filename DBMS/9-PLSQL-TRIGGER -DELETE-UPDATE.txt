@@ -1,0 +1,84 @@
+CREATE TABLE Library (
+  book_id NUMBER PRIMARY KEY,
+  book_title VARCHAR2(100),
+  author VARCHAR2(100),
+  publication_year NUMBER
+);
+
+
+CREATE TABLE Library_Audit (
+  audit_id NUMBER PRIMARY KEY,
+  book_id NUMBER,
+  old_book_title VARCHAR2(100),
+  old_author VARCHAR2(100),
+  old_publication_year NUMBER,
+  action_type VARCHAR2(10),
+  action_timestamp TIMESTAMP
+);
+
+
+
+CREATE SEQUENCE audit_id_seq START WITH 1;
+
+CREATE OR REPLACE TRIGGER library_before_update
+BEFORE UPDATE ON Library
+FOR EACH ROW
+BEGIN
+  INSERT INTO Library_Audit (
+    audit_id,
+    book_id,
+    old_book_title,
+    old_author,
+    old_publication_year,
+    action_type,
+    action_timestamp
+  ) VALUES (
+    audit_id_seq.NEXTVAL,
+    :OLD.book_id,
+    :OLD.book_title,
+    :OLD.author,
+    :OLD.publication_year,
+    'UPDATE',
+    SYSTIMESTAMP
+  );
+END library_before_update;
+/
+
+CREATE OR REPLACE TRIGGER library_before_delete
+BEFORE DELETE ON Library
+FOR EACH ROW
+BEGIN
+  INSERT INTO Library_Audit (
+    audit_id,
+    book_id,
+    old_book_title,
+    old_author,
+    old_publication_year,
+    action_type,
+    action_timestamp
+  ) VALUES (
+    audit_id_seq.NEXTVAL,
+    :OLD.book_id,
+    :OLD.book_title,
+    :OLD.author,
+    :OLD.publication_year,
+    'DELETE',
+    SYSTIMESTAMP
+  );
+END library_before_delete;
+/
+
+INSERT INTO Library (book_id, book_title, author, publication_year)
+VALUES (1, 'The Catcher in the Rye', 'J.D. Salinger', 1951);
+
+INSERT INTO Library (book_id, book_title, author, publication_year)
+VALUES (2, 'To Kill a Mockingbird', 'Harper Lee', 1960);
+
+INSERT INTO Library (book_id, book_title, author, publication_year)
+VALUES (3, '1984', 'George Orwell', 1949);
+
+INSERT INTO Library (book_id, book_title, author, publication_year)
+VALUES (4, 'Pride and Prejudice', 'Jane Austen', 1813);
+
+DELETE FROM Library
+WHERE book_id = 3;

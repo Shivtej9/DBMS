@@ -1,0 +1,79 @@
+
+CREATE TABLE Borrower (
+  Rollin NUMBER PRIMARY KEY,
+  Name VARCHAR2(100),
+  DateofIssue DATE,
+  NameofBook VARCHAR2(100),
+  Status VARCHAR2(1) CHECK (Status IN ('I', 'R'))
+);
+
+
+
+INSERT INTO Borrower VALUES (1, 'John Doe', TO_DATE('2023-01-01', 'YYYY-MM-DD'), 'Book1', 'I');
+INSERT INTO Borrower VALUES (2, 'Jane Smith', TO_DATE('2023-02-15', 'YYYY-MM-DD'), 'Book2', 'I');
+
+
+CREATE TABLE Fine (
+Roll_no NUMBER,
+Date_F DATE,
+Amt NUMBER,
+CONSTRAINT fk_fine_borrower FOREIGN KEY (Roll_no) REFERENCES Borrower(Rollin),
+CONSTRAINT pk_fine PRIMARY KEY (Roll_no, Date_F)
+)
+/
+
+
+
+DECLARE
+  v_roll_no     NUMBER;
+  v_book_name   VARCHAR2(100);
+  v_date_of_issue DATE;
+  v_current_date DATE;
+  v_days_elapsed NUMBER;
+  v_fine_amt     NUMBER;
+BEGIN
+  -- Accept roll_no & name of book from the user
+  v_roll_no := &Enter_Roll_No;
+  v_book_name := '&Enter_Book_Name';
+
+  -- Assume that DateofIssue is already stored in the Borrower table
+  SELECT DateofIssue INTO v_date_of_issue
+  FROM Borrower
+  WHERE Rollin = v_roll_no AND NameofBook = v_book_name;
+
+  -- Calculate the number of days elapsed
+  v_current_date := SYSDATE;
+  v_days_elapsed := v_current_date - v_date_of_issue;
+
+  -- Check the number of days and calculate the fine amount
+  IF v_days_elapsed > 15 AND v_days_elapsed <= 30 THEN
+    v_fine_amt := 5 * (v_days_elapsed - 15);
+  ELSIF v_days_elapsed > 30 THEN
+    v_fine_amt := 50 * (v_days_elapsed - 30);
+  ELSE
+    v_fine_amt := 0;
+  END IF;
+
+  -- Update the status in Borrower table
+  UPDATE Borrower
+  SET Status = 'R'
+  WHERE Rollin = v_roll_no AND NameofBook = v_book_name;
+
+  -- Insert details into the Fine table if fine amount is greater than 0
+  IF v_fine_amt > 0 THEN
+    INSERT INTO Fine (Roll_no, Date_F, Amt)
+    VALUES (v_roll_no, v_current_date, v_fine_amt);
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('Fine details inserted into Fine table.');
+  END IF;
+
+  -- Display information
+  DBMS_OUTPUT.PUT_LINE('Book submitted successfully.');
+  DBMS_OUTPUT.PUT_LINE('Fine Amount: Rs ' || v_fine_amt);
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Error: Book not found for the specified roll number and book name.');
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END;
+/

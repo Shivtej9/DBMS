@@ -1,0 +1,380 @@
+
+************************************************************************************************************************
+ASSIGNMENT NO :16
+Create a collection named Book. (book_isbn,title,punlisher_name,author(Name,
+Address, Phone No[landline, mobile]), publisher_city, price,copies)
+i. a. Add 5 documents in the collection with keys
+b. Give details of Books whose Publisher lives in “Pune”.
+c. Delete name Book from Book whose name start with “D”
+d. Change the city of publisher “Pearson” to “Pune”.
+e. Find the details of publisher named “Pearson”.
+
+Start-->
+ 
+use exam
+ 
+db.createCollection("Book")
+
+db.Book.insertOne({"book_isbn":101,"title":"dbms","publisher_name":"ram","author":{"name":"a
+uthor1","address":"pune","phone_no":{"landline":"123-456-7890","mobile":"1234567890"}},"publi
+sher_city":"pune","price":99,"copies":10})
+
+db.Book.find()
+
+db.Book.find({"author.address":{"pune"}});
+
+db.Book.deleteOne({"title":{"DBMS"}});
+
+db.Book.updateOne({"publisher_name":"shubham"},{$set:{"publisher_city":"pune"}});
+
+db.Book.findOne({"publisher_name":"shubham"});
+
+*************************************************************************************************************************
+ASSIGNMENT NO :17
+Create a collection named Book. (book_isbn,title,punlisher_name,author(Name,
+Address, Phone No[landline, mobile]), publisher_city, price,copies)
+a. Count the number of documents in the collection.
+b. Arrange the documents in descending order of book_isbn.
+c. Select Book Names whose title is ”DBMS” .
+d. Update Book Copies as “10” whose Book Publisher is “Tata MacGraw Hill”.
+Display name of publishers as per no of books published by them in ascending order.
+
+Start-->
+
+db.Book.countDocuments()
+
+db.Book.find().sort({"book_isbn":-1})
+db.Book.find().sort({"book_isbn":+1})
+
+db.Book.find({"title":"dbms"})
+
+db.Book.updateMany({"publisher_name":"ram"},{$set:{"copies":100}})
+
+db.Book.aggregate([{$group:{_id:"$publisher_name",count:{$sum:1}}},{$s
+$sort:{count:1}}])
+******************************************************************************************************************
+ASSIGNMENT NO :23
+
+ Create a collection named Book. Add 5 documents in the collection with keys
+(book_isbn,title,punlisher_name,author(Name, Address, Phone No[landline,
+
+mobile]), publisher_city, price,copies)
+a) Select Book Names whose title is ”DBMS” .
+b) Update Book Copies as “10” whose Book Publisher is “Tata MacGraw Hill”.
+c) Display name of publishers as per no of books published by them in ascending
+order.
+d) Get publisher names who published at least one book written by author name like
+‘K%’.
+e) Delete the book from Book table written by Author ‘Korth’.
+
+db.Book.find({"title":"dbms"})
+
+db.Book.updateMany({"publisher_name":"ram"},{$set:{"copies":100}})
+
+db.Book.aggregate([{$group:{_id:"$publisher_name",count:{$sum:1}}},{$s
+$sort:{count:1}}])
+
+exam> db.Book.distinct("publisher_name",{"author.name":{$regex:"author3"}})
+
+exam> db.Book.deleteMany({"author.name":"author1"})
+
+**********************************************************************************************************************
+
+ASSIGNMENT NO :18
+Create a collection named “ORDERS” that contain documents of the following
+prototype and solve the following queries:
+{
+cust_id: "abc123",
+ord_date: new Date("Oct 04, 2012"),
+status: 'A',
+price: 50,
+items: [
+{ sku: "xxx", qty: 25, price: 1 },
+{ sku: "yyy", qty: 25, price: 1 }
+]
+},
+a. Count all records from orders
+b. Sum the price field from orders
+c. For each unique cust_id, sum the price field.
+d. For each unique cust_id, sum the price field, results sorted by sum.
+For each unique cust_id, ord_date grouping, sum the price field
+
+
+
+db.createCollection("orders")
+
+ db.orders.insertOne({"cust_id":"abc123","order_date":new Date("oct 04 ,2012"),
+"status":"A","price":50,"items":[{sku:"xyz","qty":25,"price":1},{sku:"xxx","qty":25,"price":1}]});
+
+db.orders.find()
+
+db.orders.countDocuments()
+
+db.orders.aggregate([{$group:{_id:null,totalPrice:{$sum:"$price"}}}])
+
+db.orders.aggregate([{$group:{_id:"$cust_id",total:{$sum:"$price"}}}])
+
+db.orders.aggregate([{$group:{_id:"$cust_id", total:{$sum:"$price"}}},
+{$sort:{total:1}}])
+
+db.orders.aggregate([{$group:{_id:{cust_id:"$cust_id",order_date:"$order_date"},total:{$
+sum:"$price"}}}])
+
+
+********************************************************************************************************************
+ASSIGNMENT NO :19 and 21
+Create a collection named rating that contain 5 documents of the following
+prototype and solve the following Queries.
+{
+movie_id: 123,
+user_id: 12,
+title: Toy Story(1995),
+status: ‘A’
+}
+a) Creating an index on movie_id and sorts the keys in the index in ascending
+order. Verify the query plan
+b) Show various indexes created on movie collection.
+c) Sort movie_id in descending order.
+d) Create a descending order index on movie_id to get ratings related to “Toy
+Story (1995)” verify the query plan.
+e) Limit the number of items in the result of above query.
+f) Get ratings for the movie “ICE AGE(2005)” using the descending ordered index on
+movie_id and explain.
+g) Rebuild all indexes for the ratings collection.
+h) Drop index on rating collection.
+i) Create an index on movie_id and ratings fields together with movie_id (ascending order
+sorted) and rating (descending order sorted).
+j) Create a descending order index on movie_id to get ratings related to “Toy Story
+(1995)” verify the query plan.
+
+
+db.createCollection("rating");
+
+db.rating.insertOne({movie_id:125,user_id:14,title:"finding nemo(2003)",status:'A'})
+
+db.rating.find()
+
+
+Creating an index on movie_id and sorts the keys in the index in ascending
+order. Verify the query plan
+
+db.rating.createIndex({movie_id:1});
+
+db.rating.find({movie_id:123}).explain("executionStatus");
+
+db.rating.getIndexes();
+
+db.rating.find().sort({movie_id:-1});
+
+db.rating.createIndex({ movie_id: -1 }, { partialFilterExpression: { title: "Toy Story (1995)"
+} });
+
+ db.rating.getIndexes();
+
+db.rating.find({ title: "Toy Story (1995)" }).sort({ movie_id: -1 }).explain("executionStats");
+
+db.rating.find({title:'Toy story(1995)'},{rating:1}).sort({movie_id:-1}).limit(2);
+
+db.rating.find({ "title": "finding nemo(2003)" }).sort({ "movie_id": -1 }).explain("executionStats");
+
+db.rating.reIndex();
+
+ db.rating.dropIndexes();
+
+ db.rating.ensureIndex({movie_id:1,rating:-1});
+
+ db.rating.createIndex({ "movie_id": -1 });
+
+*********************************************************************************************************************
+ASSIGNMENT NO :20
+Design a map-reduce operations on a collection “orders” that contains documents of the
+following prototype. Solve the following .
+
+{
+cust_id: ‘abc123’
+ord_date: new Date(Oct 04, 2012),
+status: ‘A’
+price: 25,
+gender :’F’,
+rating: 1
+}
+a) Count the number of female (F) and male (M) respondents in the orders collection
+b) Count the number of each type of rating (1, 2, 3, 4 or 5) for each orders
+
+
+db.createCollection("orders");
+
+db.orders.insertOne({cust_id:"abc123",order_date:new Date("Oct 04,2012"),status:'A',
+price:50, gender:'F', rating:1})
+
+db.orders.find()
+
+*********************************************************************************************************************
+ASSIGNMENT NO :24
+Consider following structure for MongoDB collections and write a query for
+following requirements in MongoDB
+Teachers(Tname, dno, experience, salary, date_of joining)
+Students(Sname, roll_no, class)
+i) Write a MongoDB query to create above collections &amp; for insertion
+of some sample documents.
+ii) Find the information about all teachers of dno = 2 and having salary
+greater than or equal to 10,000/-
+iii) Find the student information having roll_no = 2 or Sname = Anil
+iv) Display Total no of Students of TE Class
+V) update salary as 5% increment of teacher whose experience is &gt;10 years
+
+ 
+db.createCollection("teachers")
+
+ db.teachers.insertMany([
+... {Tname: "John", dno: 1, experience: 12, salary: 12000, date_of_joining: new
+Date("2010-05-20")},{ Tname: "Alice", dno: 2, experience: 8, salary: 11000, date_of_joining: new Date("2015-02-10") },{ Tname: "Bob", dno: 2, experiexperience: 15, salary: 15000,
+date_of_joining: new Date("2005-09-15") }]);
+
+db.teachers.find()
+
+ db.createCollection("Students");
+
+db.Students.insertMany([{ Sname: "Anil", roll_no: 1, class: "TE" },{ Sname: "Sarah",
+roll_no: 2, class: "TE" }, { Sname: "David", roll_no: 3, clasclass: "SE" }]);
+
+ db.Students.find()
+
+ db.teachers.find({dno:2,salary:{$gte:10000}});
+
+ db.Students.find({ $or: [{ roll_no: 2 }, { Sname: "Anil" }] });
+
+db.Students.count({class:"TE"});
+
+ db.teachers.updateMany({experience:{$gt:10}},{$mul:{salary:1.05}});
+
+ db.teachers.find()
+
+**************************************************************************************************************************
+
+26.Create the following table with the fields given below : PRODUCT (P_ID, Model, Price, Name,
+Date_of Manufacture, Date_of Expiry)
+(a) Display name and date_of expiry of all the products whose price is more than 500.
+(b) Display name, product_ID and price of all the products whose date_of manufacture is after
+‘01-01-2018’.
+(c) Display name and date_of manufacture and date- of expiry of all the products whose price is
+between 5,000 and 10,000.
+(d) Display name, product_ID and model of all the products which are going to expire after two
+months from today.
+mysql
+
+ use dbms;
+
+ describe table product;
+
+ insert into product(p_id,model,price,name,date_of_manufacture,date_of_expiry)values
+-> (1, 'Model1', 750.00, 'Product 1', '2022-01-05', '2023-01-05'),
+-> (2, 'Model2', 300.00, 'Product 2', '2022-02-10', '2023-02-10'),
+-> (3, 'Model3', 5500.00, 'Product 3', '2022-03-15', '2023-03-15'),
+-> (4, 'Model4', 8000.00, 'Product 4', '2022-04-20', '2023-04-20'),
+-> (5, 'Model5', 9500.00, 'Product 5', '2022-05-25', '2023-05-25');
+
+ select * from product;
+
+select name,date_of_expiry from product where price>500;
+ 
+select name, p_id, model
+-> from product
+-> where date_of_manufacture > '2022-03-14';
+
+
+ select name, p_id, model
+-> from product
+-> where price between 5000 AND 10000;
+
+
+ select name, p_id, model
+-> from product
+-> where date_of_expiry >date_add(curdate(),interval 2 month);
+
+******************************************************************************************************************
+Assignment 31:
+
+Structure of 'restaurants' collection:
+{
+ "address": {
+ "building": "1007",
+ "coord": [ -73.856077, 40.848447 ],
+ "street": "Morris Park Ave",
+ "zipcode": "10462"
+ },
+ "borough": "Bronx",
+ "cuisine": "Bakery",
+ "grades": [
+ { "date": { "$date": 1393804800000 }, "grade": "A", 
+"score": 2 },
+ { "date": { "$date": 1378857600000 }, "grade": "A", 
+"score": 6 },
+ { "date": { "$date": 1358985600000 }, "grade": "A", 
+"score": 10 },
+ { "date": { "$date": 1322006400000 }, "grade": "A", 
+"score": 9 },
+ { "date": { "$date": 1299715200000 }, "grade": "B", 
+"score": 14 }
+ ],
+ "name": "Morris Park Bake Shop",
+
+ "restaurant_id": "30075445"
+}
+a.Write a MongoDB query to display the fields restaurant_id, name, 
+borough and cuisine for all the documents in the collection restaurant.
+b. Write a MongoDB query to display the fields restaurant_id, name, 
+borough and cuisine for all the documents in the collection restaurant.
+c. Write a MongoDB query to display the fields restaurant_id, name, 
+borough and zip code, but exclude the field _id for all the documents in the 
+collection restaurant.
+
+
+ db.createCollection("restaurants");
+
+db.restaurants.insertMany([
+... {
+... "address": {
+... "building": "1007",
+... "coord": [-73.856077, 40.848447],
+... "street": "Morris Park Ave",
+... "zipcode": "10462"
+... },
+... "borough": "Bronx",
+... "cuisine": "Bakery",
+... "grades": [
+... { "date": new Date("2014-03-03"), "grade": "A", "score": 2 },
+... { "date": new Date("2013-09-11"), "grade": "A", "score": 6 },
+... { "date": new Date("2013-01-24"), "grade": "A", "score": 10 },
+... { "date": new Date("2011-11-23"), "grade": "A", "score": 9 },
+... { "date": new Date("2011-03-10"), "grade": "B", "score": 14 }
+... ],
+... "name": "Morris Park Bake Shop",
+... "restaurant_id": "30075445"
+... },]);
+
+
+ 
+db.restaurants.find({}, { "restaurant_id": 1, "name": 1, "borough": 1,
+"cuisine": 1, "_id": 0 });
+
+ db.restaurants.find({}, { "restaurant_id": 1, "name": 1, "borough": 1,
+"cuisine": 1, "_id": 0 }).pretty();
+
+ db.restaurants.find({}, { "restaurant_id": 1, "name": 1, "borough": 1,
+"address.zipcode": 1, "_id": 0 });
+
+*************************************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+

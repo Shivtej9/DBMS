@@ -1,0 +1,53 @@
+CREATE TABLE Students (
+  student_id NUMBER PRIMARY KEY,
+  student_name VARCHAR2(100),
+);
+/
+
+CREATE TABLE Student_Grades (
+  student_id NUMBER,
+  marks NUMBER,
+  category VARCHAR2(50),
+  CONSTRAINT fk_student_grades FOREIGN KEY (student_id) REFERENCES Students(student_id)
+)
+/
+
+INSERT INTO Students VALUES (1, 'John Doe');
+INSERT INTO Students VALUES (2, 'Jane Smith');
+INSERT INTO Students VALUES (3, 'Alice Johnson');
+
+CREATE OR REPLACE FUNCTION get_Grade(p_marks NUMBER) RETURN VARCHAR2 IS
+  v_grade VARCHAR2(50);
+BEGIN
+  IF p_marks <= 1500 AND p_marks >= 990 THEN
+    v_grade := 'Distinction';
+  ELSIF p_marks <= 989 AND p_marks >= 900 THEN
+    v_grade := 'First Class';
+  ELSIF p_marks <= 899 AND p_marks >= 825 THEN
+    v_grade := 'Higher Second Class';
+  ELSE
+    v_grade := 'Not categorized';
+  END IF;
+
+  RETURN v_grade;
+END get_Grade;
+/
+
+
+CREATE OR REPLACE PROCEDURE proc_Grade(
+  p_student_id NUMBER,
+  p_marks NUMBER
+) IS
+  v_category VARCHAR2(50);
+BEGIN
+  -- Get the grade category using the stored function
+  v_category := get_Grade(p_marks);
+
+  -- Insert the student and grade category into a table or perform any other desired action
+  INSERT INTO Students_Grade(student_id, marks, category)
+  VALUES (p_student_id, p_marks, v_category);
+
+  -- You can also print the result or perform additional actions as needed
+  DBMS_OUTPUT.PUT_LINE('Student ID ' || p_student_id || ' has been categorized as ' || v_category);
+END proc_Grade;
+/

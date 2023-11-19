@@ -1,0 +1,494 @@
+ASSIGNMENT NO:7
+
+Write a PL/SQL block of code using parameterized Cursor
+Merge the data available in the newly created table N_RollCall with the data available
+in the table O_RollCall. If the data in the first table already exist in the second table
+then that data should be skipped.
+
+-- Creating N_RollCall table
+CREATE TABLE N_RollCall (
+    id NUMBER PRIMARY KEY,
+    name VARCHAR2(50),
+    status VARCHAR2(20)
+);
+
+-- Creating O_RollCall table
+CREATE TABLE O_RollCall (
+    id NUMBER PRIMARY KEY,
+    name VARCHAR2(50),
+    status VARCHAR2(20)
+);
+
+-- Inserting sample data into N_RollCall table
+INSERT INTO N_RollCall (id, name, status) VALUES (1, 'John', 'Present');
+INSERT INTO N_RollCall (id, name, status) VALUES (2, 'Jane', 'Absent');
+INSERT INTO N_RollCall (id, name, status) VALUES (3, 'Doe', 'Present');
+INSERT INTO N_RollCall (id, name, status) VALUES (4, 'Smith', 'Late');
+INSERT INTO N_RollCall (id, name, status) VALUES (5, 'Alex', 'Present');
+
+DECLARE
+    v_id N_RollCall.id%TYPE;
+    v_name N_RollCall.name%TYPE;
+    v_status N_RollCall.status%TYPE;
+    CURSOR c_new_rollcall IS
+        SELECT id, name, status
+        FROM N_RollCall;
+BEGIN
+    FOR rec IN c_new_rollcall LOOP
+        -- Check if data from N_RollCall already exists in O_RollCall
+        BEGIN
+            SELECT id, name, status
+            INTO v_id, v_name, v_status
+            FROM O_RollCall
+            WHERE id = rec.id; -- Assuming there's a common identifier like 'id'
+
+            -- Data already exists, skip
+            CONTINUE;
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                -- Data doesn't exist in O_RollCall, perform merge
+                INSERT INTO O_RollCall (id, name, status)
+                VALUES (rec.id, rec.name, rec.status);
+        END;
+    END LOOP;
+    
+    COMMIT; -- Commit changes
+END;
+/
+
+
+**********************************************************************************************************
+ASSIGNMENT NO:8
+
+-- Named PL/SQL Block: PL/SQL Stored Procedure and Stored Function.
+-- Write a Stored Procedure namely proc_Grade for the categorization of student. If marks scored by 
+-- students in examination is <=1500 and marks>=990then student will be placed in distinction 
+-- category if marks scored are between 989 and900 category is first class, if marks 899 and 825 
+-- category is Higher Second Class. Write a PL/SQL block for using procedure created with above 
+-- requirement. Stud_Marks(name, total_marks) Result(Roll,Name, Class).
+
+CREATE TABLE stud_marks
+(
+name VARCHAR2(25),
+total_marks NUMBER
+);
+CREATE TABLE result
+(
+roll_number NUMBER , 
+name VARCHAR2(25), 
+class VARCHAR2(30)
+);
+CREATE OR REPLACE PROCEDURE procedure_1 
+( roll_no IN NUMBER, name IN VARCHAR2 ,marks IN NUMBER) 
+AS
+BEGIN
+IF (marks<=1500 and marks>=990) THEN
+DBMS_OUTPUT.PUT_LINE (roll_no||' - '||name||' : DISTINCTION');
+INSERT INTO result VALUES (roll_no,name,'DISTINCTION');
+ELSIF (marks<=989 and marks>=900) THEN
+DBMS_OUTPUT.PUT_LINE (roll_no||' - '||name||' : FIRST CLASS');
+INSERT INTO result VALUES (roll_no,name,'FIRST CLASS');
+ELSIF (marks<=899 and marks>825) THEN
+DBMS_OUTPUT.PUT_LINE(roll_no||' - '||name||' : HIGHER SECOND CLASS');
+INSERT INTO result VALUES (roll_no,name,'HIGHER SECOND CLASS');
+ELSE
+DBMS_OUTPUT.PUT_LINE (roll_no||' - '||name||' : FAIL');
+INSERT INTO result VALUES (roll_no,name,'FAIL');
+END IF;
+INSERT INTO stud_marks VALUES (name,marks);
+END procedure_1;
+/
+
+BEGIN
+procedure_1(54,'SUDARSHAN',1000);
+procedure_1(46,'ARYAN ',950);
+procedure_1(58,'ARJUN ',1050);
+procedure_1(48,'SARTHAK ',750);
+END;
+/
+
+select * from stud_marks
+
+select * from stud_marks
+
+*************************************************************************************************************
+ASSIGNMENT NO:9
+
+-- Database Trigger (All Types: Row level and Statement level triggers, Before and After Triggers).
+-- Write a database trigger on Library table. The System should keep track of the records that are 
+-- being updated or deleted. The old value of updated or deleted records should be added in 
+-- Library_Audit table.
+
+--  Table Creation 
+
+CREATE TABLE Library
+(
+Book_Id NUMBER(5),
+Book_Name VARCHAR2(20),
+Book_Type VARCHAR2(20),
+Issued_By VARCHAR2(20)
+);
+
+--  Table Insertion 
+
+INSERT INTO Library VALUES (1234,'DBMS','Reference','Sudarshan');
+INSERT INTO Library VALUES (1836,'TOC','Text','Siddham');
+INSERT INTO Library VALUES (1996,'SPOS','Reference','Shreyas');
+INSERT INTO Library VALUES (1196,'CNS','Text','Sairaj');
+
+--  Table Creation
+
+CREATE TABLE Back_UP
+(
+Book_Id NUMBER(5),
+Book_Name VARCHAR2(20),
+Book_Type VARCHAR2(20),
+Issued_By VARCHAR2(20)
+);
+
+--  Trigger Creation
+
+CREATE TRIGGER Update_Rec
+AFTER UPDATE OR DELETE ON Library
+FOR EACH ROW
+BEGIN
+INSERT INTO Back_UP
+(Book_Id, Book_Name, Book_Type, Issued_By)
+VALUES
+(:old.Book_Id, :old.Book_Name, :old.Book_Type, :old.Issued_By);
+END;
+/
+
+UPDATE LIBRARY
+SET Issued_By = 'Sairaj'
+WHERE Issued_By = 'Sumit';
+
+SELECT * FROM Back_UP;
+***************************************************************************************************************
+ASSIGNMENT NO:10
+Write a PL/SQL block of code for the following requirements:-
+
+Schema:
+
+Borrower(Rollin, Name, DateofIssue, NameofBook, Status)
+Fine(Roll_no, Date, Amt)
+a. Accept roll_no &amp; name of book from user.
+b. Check the number of days (from date of issue), if days are between 15 to 30
+then fine amount will be Rs 5per day.
+c. If no. of days&gt;30, per day fine will be Rs 50 per day &amp; for days less than 30,
+Rs. 5 per day.
+d. After submitting the book, status will change from I to R.
+e. If condition of fine is true, then details will be stored into fine table.
+
+CREATE TABLE BORROWER
+(
+roll_no NUMBER, 
+name VARCHAR2(25), 
+dateofissue DATE,
+name_of_book VARCHAR2(25), 
+status VARCHAR2(20)
+);
+CREATE TABLE FINE
+(
+roll_no NUMBER,
+date_of_return DATE,
+amt NUMBER
+);
+
+INSERT INTO borrower VALUES(54,'SUDARSHAN',TO_DATE('01-10-2022','DD-MM-YYYY'),'HARRY POTTER','I');
+INSERT INTO borrower VALUES(56,'SUMIT',TO_DATE('15-10-2022','DD-MM-YYYY'),'DARK MATTER','I');
+INSERT INTO borrower VALUES(68,'MANDAR',TO_DATE('24-09-2022','DD-MM-YYYY'),'SILENT HILL','I');
+INSERT INTO borrower VALUES(66,'SIDDHAM',TO_DATE('26-08-2022','DD-MM-YYYY'),'GOD OF WAR','I');
+INSERT INTO borrower VALUES(50,'SHREYAS',TO_DATE('09-09-2022','DD-MM-YYYY'),'SPIDER-MAN','I');
+
+-- Step 2) Run below commands all at once
+
+DECLARE
+	i_roll_no NUMBER:=54;
+	name_of_book VARCHAR2(25);
+	no_of_days NUMBER;
+	return_date DATE := TO_DATE(SYSDATE,'DD-MM-YYYY');
+	temp NUMBER;
+	doi DATE;   -- this is date of issue
+	fine NUMBER:=0;
+    NEG_DAYS exception;
+
+BEGIN
+
+	i_roll_no := i_roll_no;  --  this is user input user will put roll no and the name of book
+	name_of_book := name_of_book;
+
+  -- this is query to find date of issue of certain book
+	SELECT to_date(borrower.dateofissue,'DD-MM-YYYY') INTO doi
+        FROM borrower
+        WHERE borrower.roll_no = i_roll_no
+        AND borrower.name_of_book = name_of_book;
+
+-- this is to find no of days between return date and date of issue
+        no_of_days := return_date-doi;
+
+-- this is to check if no of days is negative
+	IF (no_of_days<0) THEN
+        raise NEG_DAYS;
+        END IF;
+        dbms_output.put_line(no_of_days);
+	IF (no_of_days >15 AND no_of_days <=30) THEN
+		fine := 5*(no_of_days-15);
+
+	ELSIF (no_of_days>30 ) THEN
+		temp := no_of_days-30; -- first 30 will charge only 5 rs per day then  50 rupess per day start
+		fine := 75 + temp*50;
+	END IF;
+	dbms_output.put_line(fine);
+	IF (fine>0) THEN
+        INSERT INTO fine VALUES(i_roll_no,return_date,fine);
+        END IF;
+
+        UPDATE borrower SET status = 'R' WHERE borrower.roll_no = i_roll_no;
+		-- this is to update the status of book to returned R means RETURN I means ISSUED
+EXCEPTION
+        WHEN NEG_DAYS THEN
+	DBMS_OUTPUT.PUT_LINE('NEGATIVE DAYS NOT EXCEPTED');
+        when NO_DATA_FOUND then
+             dbms_output.put_line('no_data_found');
+        when OTHERS then
+             dbms_output.put_line('some_error_found');
+END;
+
+-- Step 3) To display the tables use select commands
+
+SELECT * FROM FINE
+SELECT * FROM BORROWER
+
+-- Step 4) Deleting Tables
+DROP TABLE FINE
+DROP TABLE BORROWER
+*************************************************************************************************
+ASSIGNMENT RADIUS :
+
+-- 1. Write a PL/SQL code block to calculate the area of a circle for a value of radius varying 
+-- from 5 to 9. Store the radius and the corresponding values of calculated area in an empty 
+-- table named areas, consisting of two columns, radius and area.
+
+-- Answer:
+
+CREATE TABLE AREAS
+(
+RADIUS NUMBER(5),
+AREA NUMBER(14,2)
+);
+
+DECLARE
+pi constant number(4,2):=3.14;
+radius number(5);
+area number(14,2);
+BEGIN
+radius :=5;
+while radius <=9
+loop
+area := pi*power(radius,2);
+insert into areas values(radius,area);
+radius := radius+1;
+end loop;
+end;
+/
+***********************************************************************************************************
+ASSIGNMENT NO:11
+
+The organization has decided to increase the salary of employees by 10% of
+existing salary, whose existing salary is less than Rs. 10000/-
+Write a PL/SQ block to update the salary as per above requirement, display an
+appropriate message based on the no. of rows affected by this update (using
+implicit cursor status variables).
+
+
+CREATE TABLE employees (
+    employee_id NUMBER,
+    employee_name VARCHAR2(50),
+    salary NUMBER
+);
+
+INSERT INTO employees (employee_id, employee_name, salary) VALUES (1, 'John', 9000);
+INSERT INTO employees (employee_id, employee_name, salary) VALUES (2, 'Jane', 11000);
+INSERT INTO employees (employee_id, employee_name, salary) VALUES (3, 'Doe', 9500);
+INSERT INTO employees (employee_id, employee_name, salary) VALUES (4, 'Smith', 10500);
+INSERT INTO employees (employee_id, employee_name, salary) VALUES (5, 'Alex', 8500);
+
+
+select * from employees;
+
+
+DECLARE
+    rows_affected NUMBER;
+BEGIN
+    UPDATE employees
+    SET salary = salary * 1.1 -- Increasing salary by 10%
+    WHERE salary < 10000;
+
+    rows_affected := SQL%ROWCOUNT; -- Getting the number of rows affected by the update
+
+    IF rows_affected > 0 THEN
+        DBMS_OUTPUT.PUT_LINE(rows_affected || ' employee(s) had their salaries increased by 10%.');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('No employees found with salaries less than Rs. 10000.');
+    END IF;
+END;
+/
+
+select * from employees;
+
+**********************************************************************************************************
+ASSIGNMENT NO:29
+
+Create the following tables :Student(roll-no, name, date-of-birth, course-
+id)Course (Course-id, name, fee, duration, status)
+(a) Create a form to accept the data from the user with appropriate validationchecks.
+(b) Write PL/SQL procedure to do the following :Set the status of course to &quot;not offered&quot; in
+which the number of candidates isless than 5
+
+-- Creating Student table
+CREATE TABLE Student (
+    roll_no INT PRIMARY KEY,
+    name VARCHAR(100),
+    date_of_birth DATE,
+    course_id INT,
+    FOREIGN KEY (course_id) REFERENCES Course(Course_id)
+);
+
+-- Creating Course table
+CREATE TABLE Course (
+    Course_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    fee DECIMAL(10, 2),
+    duration INT,
+    status VARCHAR(20)
+);
+/
+
+-- Inserting 5 records into Course table
+INSERT INTO Course (Course_id, name, fee, duration, status)
+VALUES (1, 'Mathematics', 250.00, 4, 'Offered'),
+       (2, 'Science', 300.00, 5, 'Offered'),
+       (3, 'History', 200.00, 3, 'Offered'),
+       (4, 'English', 280.00, 4, 'Offered'),
+       (5, 'Computer Science', 350.00, 5, 'Offered');
+
+select * from course;
+
+-- Inserting 5 records into Student table
+INSERT INTO Student (roll_no, name, date_of_birth, course_id)
+VALUES (1, 'John Doe', TO_DATE('1998-05-15', 'YYYY-MM-DD'), 1),
+       (2, 'Jane Smith', TO_DATE('1999-03-21', 'YYYY-MM-DD'), 2),
+       (3, 'Alice Johnson', TO_DATE('1997-11-28', 'YYYY-MM-DD'), 1),
+       (4, 'Bob Williams', TO_DATE('2000-07-10', 'YYYY-MM-DD'), 3),
+       (5, 'Eve Anderson', TO_DATE('1996-09-05', 'YYYY-MM-DD'), 2);
+
+select * from student;
+
+CREATE OR REPLACE PROCEDURE UpdateCourseStatus AS
+BEGIN
+    UPDATE Course c
+    SET c.status = 'Not offered'
+    WHERE c.Course_id IN (
+        SELECT s.course_id
+        FROM Student s
+        GROUP BY s.course_id
+        HAVING COUNT(*) < 5
+    );
+    COMMIT;
+END;
+
+select * from course;
+
+
+select * from student;
+
+
+BEGIN
+    UpdateCourseStatus;
+END;
+
+select * from course;
+
+
+select * from student;
+******************************************************************************************************************
+
+ASSIGNMENT NO:30
+
+Create the following tables :Student(roll-no, name, date-of-birth, course-
+id)Course (Course-id, name, fee, duration, status)(a) Create a form to accept the data from the
+user with appropriate validationchecks.(b) Write PL/SQL procedure to do the following :Set the
+status of course to &quot;offered&quot; in which the number of candidates is atleast 10 otherwise set it to
+&quot;not offered&quot;
+
+-- Creating Student table
+CREATE TABLE Student (
+    roll_no INT PRIMARY KEY,
+    name VARCHAR(100),
+    date_of_birth DATE,
+    course_id INT,
+    FOREIGN KEY (course_id) REFERENCES Course(Course_id)
+);
+
+-- Creating Course table
+CREATE TABLE Course (
+    Course_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    fee DECIMAL(10, 2),
+    duration INT,
+    status VARCHAR(20)
+);
+/
+
+-- Inserting 5 records into Course table
+INSERT INTO Course (Course_id, name, fee, duration, status)
+VALUES (1, 'Mathematics', 250.00, 4, 'Offered'),
+       (2, 'Science', 300.00, 5, 'Offered'),
+       (3, 'History', 200.00, 3, 'Offered'),
+       (4, 'English', 280.00, 4, 'Offered'),
+       (5, 'Computer Science', 350.00, 5, 'Offered');
+
+select * from course;
+
+-- Inserting 5 records into Student table
+INSERT INTO Student (roll_no, name, date_of_birth, course_id)
+VALUES (1, 'John Doe', TO_DATE('1998-05-15', 'YYYY-MM-DD'), 1),
+       (2, 'Jane Smith', TO_DATE('1999-03-21', 'YYYY-MM-DD'), 2),
+       (3, 'Alice Johnson', TO_DATE('1997-11-28', 'YYYY-MM-DD'), 1),
+       (4, 'Bob Williams', TO_DATE('2000-07-10', 'YYYY-MM-DD'), 3),
+       (5, 'Eve Anderson', TO_DATE('1996-09-05', 'YYYY-MM-DD'), 2);
+
+select * from student;
+
+CREATE OR REPLACE PROCEDURE UpdateCourseStatus AS
+    v_count NUMBER;
+BEGIN
+    FOR course_rec IN (SELECT Course_id FROM Course) LOOP
+        SELECT COUNT(*) INTO v_count
+        FROM Student
+        WHERE course_id = course_rec.Course_id;
+
+        IF v_count >= 10 THEN
+            UPDATE Course
+            SET status = 'Offered'
+            WHERE Course_id = course_rec.Course_id;
+        ELSE
+            UPDATE Course
+            SET status = 'Not Offered'
+            WHERE Course_id = course_rec.Course_id;
+        END IF;
+    END LOOP;
+    COMMIT;
+END;
+
+select * from course;
+
+
+select * from student;
+
+
+
+
+
+

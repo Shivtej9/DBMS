@@ -1,0 +1,38 @@
+-- Create N_ROLL_CALL table
+CREATE TABLE N_ROLL_CALL (
+  id NUMBER PRIMARY KEY,
+  name VARCHAR2(50)
+);
+
+-- Insert some sample data into N_ROLL_CALL
+INSERT INTO N_ROLL_CALL VALUES (1, 'John Doe');
+INSERT INTO N_ROLL_CALL VALUES (2, 'Jane Smith');
+INSERT INTO N_ROLL_CALL VALUES (3, 'Alice Johnson');
+
+-- Create O_ROLL_CALL table
+CREATE TABLE O_ROLL_CALL (
+  id NUMBER PRIMARY KEY,
+  name VARCHAR2(50)
+);
+
+-- Insert some sample data into O_ROLL_CALL
+INSERT INTO O_ROLL_CALL VALUES (1, 'John Doe');
+INSERT INTO O_ROLL_CALL VALUES (4, 'Bob Brown');
+INSERT INTO O_ROLL_CALL VALUES (5, 'Charlie White');
+
+
+
+
+-----------------------------------------------------------------------------------------------
+
+declare
+cursor cur1 is
+select * from n_roll_call;
+begin
+for rec in cur1
+loop
+delete from o_roll_call where roll_no=rec.roll_no;
+insert into o_roll_call values(rec.roll_no,rec.name);
+end loop;
+end;
+/

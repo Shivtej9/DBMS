@@ -1,0 +1,89 @@
+-- Create Student table
+CREATE TABLE Student (
+  roll_no NUMBER PRIMARY KEY,
+  marks NUMBER,
+  category VARCHAR2(50),
+  district VARCHAR2(50),
+  state VARCHAR2(50)
+);
+
+-- Create Student-rank table
+CREATE TABLE Student_rank (
+  roll_no NUMBER PRIMARY KEY,
+  marks NUMBER,
+  rank NUMBER
+);
+
+
+
+
+
+-- Sample PL/SQL block to simulate user input
+DECLARE
+  v_roll_no NUMBER;
+  v_marks NUMBER;
+  v_category VARCHAR2(50);
+  v_district VARCHAR2(50);
+  v_state VARCHAR2(50);
+
+  v_rank_roll_no NUMBER;
+  v_rank_marks NUMBER;
+  v_rank NUMBER;
+
+BEGIN
+  -- Accept data for Student table
+  DBMS_OUTPUT.PUT('Enter Roll Number for Student: ');
+  v_roll_no := TO_NUMBER(&Enter_Roll_No);
+
+  DBMS_OUTPUT.PUT('Enter Marks for Student: ');
+  v_marks := TO_NUMBER(&Enter_Marks);
+
+  DBMS_OUTPUT.PUT('Enter Category for Student: ');
+  v_category := '&Enter_Category';
+
+  DBMS_OUTPUT.PUT('Enter District for Student: ');
+  v_district := '&Enter_District';
+
+  DBMS_OUTPUT.PUT('Enter State for Student: ');
+  v_state := '&Enter_State';
+
+  -- Insert values into Student table
+  INSERT INTO Student (roll_no, marks, category, district, state)
+  VALUES (v_roll_no, v_marks, v_category, v_district, v_state);
+
+  -- Accept data for Student_rank table
+  DBMS_OUTPUT.PUT('Enter Roll Number for Student Rank: ');
+  v_rank_roll_no := TO_NUMBER(&Enter_Rank_Roll_No);
+
+  DBMS_OUTPUT.PUT('Enter Marks for Student Rank: ');
+  v_rank_marks := TO_NUMBER(&Enter_Rank_Marks);
+
+  DBMS_OUTPUT.PUT('Enter Rank for Student: ');
+  v_rank := TO_NUMBER(&Enter_Rank);
+
+  -- Insert values into Student_rank table
+  INSERT INTO Student_rank (roll_no, marks, rank)
+  VALUES (v_rank_roll_no, v_rank_marks, v_rank);
+
+  COMMIT; -- Commit the changes to the database
+  DBMS_OUTPUT.PUT_LINE('Data successfully inserted into Student and Student_rank tables.');
+
+  -- Query (i): List all those students who have come from Tamilnadu state and secured a rank above 100
+  DBMS_OUTPUT.PUT_LINE('Students from Tamilnadu with rank above 100:');
+  FOR student_record IN (SELECT * FROM Student WHERE state = 'Tamilnadu' AND roll_no IN (SELECT roll_no FROM Student_rank WHERE rank > 100))
+  LOOP
+    DBMS_OUTPUT.PUT_LINE('Roll Number: ' || student_record.roll_no || ', Marks: ' || student_record.marks || ', Category: ' || student_record.category || ', District: ' || student_record.district || ', State: ' || student_record.state);
+  END LOOP;
+
+  -- Query (ii): List all those students who come from Andhra Pradesh state and belong to given category who have secured a rank above 100
+  DBMS_OUTPUT.PUT_LINE('Students from Andhra Pradesh with given category and rank above 100:');
+  FOR student_record IN (SELECT * FROM Student WHERE state = 'Andhra Pradesh' AND category = 'given_category' AND roll_no IN (SELECT roll_no FROM Student_rank WHERE rank > 100))
+  LOOP
+    DBMS_OUTPUT.PUT_LINE('Roll Number: ' || student_record.roll_no || ', Marks: ' || student_record.marks || ', Category: ' || student_record.category || ', District: ' || student_record.district || ', State: ' || student_record.state);
+  END LOOP;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END;
+/

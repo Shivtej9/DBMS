@@ -1,0 +1,99 @@
+-- Create Item table
+CREATE TABLE Item (
+  item_code NUMBER PRIMARY KEY,
+  item_name VARCHAR2(100),
+  qty_in_stock NUMBER,
+  reorder_level NUMBER
+);
+
+-- Create Supplier table
+CREATE TABLE Supplier (
+  supplier_code NUMBER PRIMARY KEY,
+  supplier_name VARCHAR2(100),
+  address VARCHAR2(255)
+);
+
+-- Create Can_Supply table
+CREATE TABLE Can_Supply (
+  supplier_code NUMBER,
+  item_code NUMBER,
+  PRIMARY KEY (supplier_code, item_code),
+  FOREIGN KEY (supplier_code) REFERENCES Supplier(supplier_code),
+  FOREIGN KEY (item_code) REFERENCES Item(item_code)
+);
+
+
+DECLARE
+  v_item_code NUMBER;
+  v_item_name VARCHAR2(100);
+  v_qty_in_stock NUMBER;
+  v_reorder_level NUMBER;
+  v_supplier_code NUMBER;
+  v_supplier_name VARCHAR2(100);
+  v_supplier_address VARCHAR2(255);
+  v_can_supply_supplier_code NUMBER;
+  v_can_supply_item_code NUMBER;
+  -- Cursor for Query (i)
+  CURSOR suppliers_for_item IS
+    SELECT s.supplier_code, s.supplier_name, s.address
+    FROM Supplier s
+    JOIN Can_Supply cs ON s.supplier_code = cs.supplier_code
+    WHERE cs.item_code = v_item_code;
+  -- Cursor for Query (ii)
+  CURSOR items_not_supplied IS
+    SELECT i.item_code, i.item_name, i.qty_in_stock, i.reorder_level
+    FROM Item i
+    WHERE NOT EXISTS (
+      SELECT 1 FROM Can_Supply cs
+      WHERE cs.item_code = i.item_code
+    );
+BEGIN
+  -- Accept data for Item table
+  DBMS_OUTPUT.PUT('Enter Item Code: ');
+  v_item_code := TO_NUMBER(&Enter_Item_Code);
+  DBMS_OUTPUT.PUT('Enter Item Name: ');
+  v_item_name := '&Enter_Item_Name';
+  DBMS_OUTPUT.PUT('Enter Quantity in Stock: ');
+  v_qty_in_stock := TO_NUMBER(&Enter_Qty_In_Stock);
+  DBMS_OUTPUT.PUT('Enter Reorder Level: ');
+  v_reorder_level := TO_NUMBER(&Enter_Reorder_Level);
+  -- Insert values into Item table
+  INSERT INTO Item (item_code, item_name, qty_in_stock, reorder_level)
+  VALUES (v_item_code, v_item_name, v_qty_in_stock, v_reorder_level);
+  -- Accept data for Supplier table
+  DBMS_OUTPUT.PUT('Enter Supplier Code: ');
+  v_supplier_code := TO_NUMBER(&Enter_Supplier_Code);
+  DBMS_OUTPUT.PUT('Enter Supplier Name: ');
+  v_supplier_name := '&Enter_Supplier_Name';
+  DBMS_OUTPUT.PUT('Enter Supplier Address: ');
+  v_supplier_address := '&Enter_Supplier_Address';
+  -- Insert values into Supplier table
+  INSERT INTO Supplier (supplier_code, supplier_name, address)
+  VALUES (v_supplier_code, v_supplier_name, v_supplier_address);
+  -- Accept data for Can_Supply table
+  DBMS_OUTPUT.PUT('Enter Supplier Code for Can_Supply: ');
+  v_can_supply_supplier_code := TO_NUMBER(&Enter_Can_Supply_Supplier_Code);
+  DBMS_OUTPUT.PUT('Enter Item Code for Can_Supply: ');
+  v_can_supply_item_code := TO_NUMBER(&Enter_Can_Supply_Item_Code);
+  -- Insert values into Can_Supply table
+  INSERT INTO Can_Supply (supplier_code, item_code)
+  VALUES (v_can_supply_supplier_code, v_can_supply_item_code);
+  COMMIT; -- Commit the changes to the database
+  DBMS_OUTPUT.PUT_LINE('Data successfully inserted into Item, Supplier, and Can_Supply tables.');
+  -- Query (i): List all those suppliers who can supply the given item
+  DBMS_OUTPUT.PUT_LINE('Suppliers who can supply Item ' || v_item_code || ':');
+  FOR supplier_record IN suppliers_for_item
+  LOOP
+    DBMS_OUTPUT.PUT_LINE('Supplier Code: ' || supplier_record.supplier_code || ', Supplier Name: ' || supplier_record.supplier_name || ', Address: ' || supplier_record.address);
+  END LOOP;
+  -- Query (ii): List all those items which cannot be supplied by a given company
+  DBMS_OUTPUT.PUT_LINE('Items that cannot be supplied by any company:');
+  FOR item_record IN items_not_supplied
+  LOOP
+    DBMS_OUTPUT.PUT_LINE('Item Code: ' || item_record.item_code || ', Item Name: ' || item_record.item_name || ', Qty in Stock: ' || item_record.qty_in_stock || ', Reorder Level: ' || item_record.reorder_level);
+  END LOOP;
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END;
+/
