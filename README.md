@@ -76,11 +76,15 @@ to 100000
 iv. Write a query to find the names of employees that begin with ‘S’
 v. Write a query to fetch top N records.
 ## Practical 7:
+[7-PLSQL-CURSOR-O_TAB-M_TAB.txt](https://github.com/Shivtej9/DBMS/files/13404317/7-PLSQL-CURSOR-O_TAB-M_TAB.txt)
+
 Write a PL/SQL block of code using parameterized Cursor
 Merge the data available in the newly created table N_RollCall with the data available 
 in the table O_RollCall. If the data in the first table already exist in the second table 
 then that data should be skipped.2
 ## Practical 8:
+[8-PLSQL-PROCEDURE-MARK_CATEGORY.txt](https://github.com/Shivtej9/DBMS/files/13404318/8-PLSQL-PROCEDURE-MARK_CATEGORY.txt)
+
 Write a PL/SQL block of Stored Procedure and Stored Function proc_Grade for 
 following problem statement. 
 Write a Stored Procedure namely proc_Grade for the categorization of student. If 
@@ -88,12 +92,16 @@ marks scored by students in examination is <=1500 and marks>=990 then student
 will be placed in distinction category if marks scored are between 989 and 900 
 category is first class, if marks 899 and 825 category is Higher Second Class.
 ## Practical 9:
+[9-PLSQL-TRIGGER -DELETE-UPDATE.txt](https://github.com/Shivtej9/DBMS/files/13404321/9-PLSQL-TRIGGER.-DELETE-UPDATE.txt)
+
 Write a database trigger: Row level and Statement level triggers, Before and After 
 delete or update of database.
 Write a database trigger on Library table. The System should keep track of the 
 records that are being updated or deleted. The old value of updated or deleted 
 records should be added in Library_Audit table. 
 ## Practical 10:
+[10-PLSQL-BOROWER.txt](https://github.com/Shivtej9/DBMS/files/13404322/10-PLSQL-BOROWER.txt)
+
 Write a PL/SQL block of code for the following requirements:- 
 Schema: 
 Borrower(Rollin, Name, DateofIssue, NameofBook, Status) 
@@ -106,12 +114,17 @@ Rs. 5 per day.
 d. After submitting the book, status will change from I to R. 
 e. If condition of fine is true, then details will be stored into fine table.
 ## Practical 11:
+[11-PLSQL-employe_sal-up_sal.txt](https://github.com/Shivtej9/DBMS/files/13404323/11-PLSQL-employe_sal-up_sal.txt)
+
 The organization has decided to increase the salary of employees by 10% of 
 existing salary, whose existing salary is less than Rs. 10000/- 
 Write a PL/SQ block to update the salary as per above requirement, display an 
 appropriate message based on the no. of rows affected by this update (using 
 implicit cursor status variables).
 ## Practical 12:
+[12-PLSQL-College_info-Accept_info-faculty_info.txt](https://github.com/Shivtej9/DBMS/files/13404326/12-PLSQL-College_info-Accept_info-faculty_info.txt)
+[12-MYSQL-College_Info.txt](https://github.com/Shivtej9/DBMS/files/13404325/12-MYSQL-College_Info.txt)
+
 Create The following two tables :
 College-info
 Faculty-info
@@ -126,6 +139,9 @@ to 10 years and have M. Tech degree.
 d. List all those faculty members, who have at least 10 years of experience
 but do not have M. Tech degree
 ## Practical 13:
+[13-PLSQL-Student_for_dbms.txt](https://github.com/Shivtej9/DBMS/files/13404328/13-PLSQL-Student_for_dbms.txt)
+[13-MYSQL-STUDENT_FOR_DBS.txt](https://github.com/Shivtej9/DBMS/files/13404327/13-MYSQL-STUDENT_FOR_DBS.txt)
+
 Create the following table :
 Student (roll-no, name, subject-name, subject-opted)
 Subject(faculty-code, faculty-name, specialization)
@@ -135,6 +151,9 @@ Subject(faculty-code, faculty-name, specialization)
 (i) Find the number of students who have enrolled for the subject "DBMS".
 (ii) Find all those faculty members who have not offered any subject.
 ## Practical 14:
+[14-PLSQL-ORDER.txt](https://github.com/Shivtej9/DBMS/files/13404330/14-PLSQL-ORDER.txt)
+[14-MYSQL-ORDER.txt](https://github.com/Shivtej9/DBMS/files/13404329/14-MYSQL-ORDER.txt)
+
 Create the following table :
 Item (item-code, item-name, qty-in-stock, reorder-level)
 Supplier (supplier-code, supplier-name, address)
@@ -149,6 +168,9 @@ List all those suppliers who can supply the given item.
 (ii)
 List all those items which cannot be supplied by given company
 ## Practical 15:
+[15-PLSQL-STATE_RANK.txt](https://github.com/Shivtej9/DBMS/files/13404334/15-PLSQL-STATE_RANK.txt)
+[15-MYSQL-STATE_RANK.txt](https://github.com/Shivtej9/DBMS/files/13404333/15-MYSQL-STATE_RANK.txt)
+
 Create the following tables:
 Student (roll-no, marks, category, district, state)
 Student-rank(roll-no, marks, rank)
@@ -208,6 +230,8 @@ d) Create a descending order index on movie_id to get ratings related to “Toy
 Story (1995)” verify the query plan.
 e) Limit the number of items in the result of above query
 ## Practical 20:
+[20-MONGO-Map_reduce.txt](https://github.com/Shivtej9/DBMS/files/13404335/20-MONGO-Map_reduce.txt)
+
 Design a map-reduce operations on a collection “orders” that contains documents of the 
 following prototype. Solve the following .
 {
