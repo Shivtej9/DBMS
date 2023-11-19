@@ -123,6 +123,7 @@ appropriate message based on the no. of rows affected by this update (using
 implicit cursor status variables).
 ## Practical 12:
 [12-PLSQL-College_info-Accept_info-faculty_info.txt](https://github.com/Shivtej9/DBMS/files/13404326/12-PLSQL-College_info-Accept_info-faculty_info.txt)
+
 [12-MYSQL-College_Info.txt](https://github.com/Shivtej9/DBMS/files/13404325/12-MYSQL-College_Info.txt)
 
 Create The following two tables :
@@ -140,6 +141,7 @@ d. List all those faculty members, who have at least 10 years of experience
 but do not have M. Tech degree
 ## Practical 13:
 [13-PLSQL-Student_for_dbms.txt](https://github.com/Shivtej9/DBMS/files/13404328/13-PLSQL-Student_for_dbms.txt)
+
 [13-MYSQL-STUDENT_FOR_DBS.txt](https://github.com/Shivtej9/DBMS/files/13404327/13-MYSQL-STUDENT_FOR_DBS.txt)
 
 Create the following table :
@@ -152,6 +154,7 @@ Subject(faculty-code, faculty-name, specialization)
 (ii) Find all those faculty members who have not offered any subject.
 ## Practical 14:
 [14-PLSQL-ORDER.txt](https://github.com/Shivtej9/DBMS/files/13404330/14-PLSQL-ORDER.txt)
+
 [14-MYSQL-ORDER.txt](https://github.com/Shivtej9/DBMS/files/13404329/14-MYSQL-ORDER.txt)
 
 Create the following table :
@@ -169,6 +172,7 @@ List all those suppliers who can supply the given item.
 List all those items which cannot be supplied by given company
 ## Practical 15:
 [15-PLSQL-STATE_RANK.txt](https://github.com/Shivtej9/DBMS/files/13404334/15-PLSQL-STATE_RANK.txt)
+
 [15-MYSQL-STATE_RANK.txt](https://github.com/Shivtej9/DBMS/files/13404333/15-MYSQL-STATE_RANK.txt)
 
 Create the following tables:
