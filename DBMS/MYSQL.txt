@@ -1,0 +1,506 @@
+PRACTICAL NO : 1
+For the given Library database
+BOOK (Book_ISBN [PK], Title[Not Null], Publisher_ Name, price[Check Price&gt;0],
+Date_Of_Publication,Book_Copy ),
+BOOK_AUTHORS (Book_ISBN [PK,FK]Author_Name [PK], Author_City)
+Solve the following
+a) Create view BOOK_AUTHOR_INFO consisting Book_ISBN, Title from
+BOOK Table and Author_Name from BOOK_AUTHORS Table in ascending
+order of ISBN no.
+b) Create an index on Book_Author on table on attribute “Author_Name”.
+c) Create table Book_Auto_Increment (BookID int Auto_increament=100, Book
+Name) insert five records in table.
+d) Delete the book from Book table written by Author ‘Korth’.
+e) Select Book Names from table Book whose copies are in between 10 to 15.
+
+ANS-->
+
+mysql> create table book(book_isbn int primary key,title varchar(50),publisher_name
+varchar(50),price int check(price>0),date_of_publication date,book_copy int);
+
+mysql> describe book;
+
+mysql> insert into book(book_isbn,title,publisher_name,price,date_of_publica
+tion,book_copy)values
+-> (1, 'Book1', 'Publisher1', 25.00, '2023-01-15', 50),
+-> (2,'Book2', 'Publisher2',40,'2022-07-20',40),
+-> (3, 'Book3', 'Publisher3', 20.00, '2021-05-10', 60),
+-> (4, 'Book4', 'Publisher1', 150, '2020-11-30', 35),
+-> (5, 'Book5', 'Publisher4', 180, '2019-09-25', 45);
+
+mysql> select * from book;
+
+mysql> create table book_author(book_isbn int ,author_name varchar(50),autho
+r_city varchar(50),primary key(book_isbn,author_name),foreign key(book_isbn)
+references book(book_isbn));
+
+mysql> describe book_author;
+
+mysql> insert into book_author(book_isbn,author_name,author_city)values
+-> (1,'author1','city1'),
+-> (2,'author2','city2'),
+-> (3,'author3','city3'),
+-> (4,'author4','city4'),
+-> (5,'author5','city5');
+
+mysql> select *from book_author;
+
+mysql> create view book_author_info as
+-> select B.book_isbn, B.title,BA.author_name
+-> from book B
+-> inner join book_author BA on B.book_isbn=BA.book_isbn
+-> order by B.book_isbn ASC;
+
+mysql> create index idx_author_name on book_author(author_name);
+
+mysql>CREATE TABLE Book_Auto_Increment (
+    BookID INT AUTO_INCREMENT = 100,
+    Book_Name VARCHAR(100)
+);
+
+INSERT INTO Book_Auto_Increment (Book_Name) VALUES
+('Book 1'),
+('Book 2'),
+('Book 3'),
+('Book 4'),
+('Book 5');
+
+mysql> DELETE FROM BOOK
+      WHERE Book_ISBN IN (
+      SELECT Book_ISBN
+      FROM BOOK_AUTHORS
+      WHERE Author_Name = 'AUTHOR3'
+   );
+
+
+mysql> select title as book_name from book where book_copy between 30 and 50.
+
+**************************************************************************************
+
+
+PRACTICAL NO : 2
+For the given Library database
+BOOK (Book_ISBN [PK], Title[Not Null], Publisher_ Name, price[Check Price&gt;0],
+Date_Of_Publication,Book_Copy ),
+BOOK_AUTHORS (Book_ISBN [PK,FK]Author_Name [PK], Author_City)
+Solve the following
+
+a) Select Book_ISBN, Title, Author_Name from relations Book and
+Book_Authors INNER JOIN on attribute Book_ISBN.
+b) Select Book_ISBN, Title, Publisher, Author_Name from relations Book and
+Book_Authors LEFT OUTER JOIN on attribute Book_ISBN.
+c) Select Book_ISBN, Title, Publisher, Author_Name from relations Book and
+Book_Authors RIGHT OUTER JOIN on attribute Book_ISBN.
+d) Select Book_ISBN, Title from relation Book whose author is living in City
+=’Pune’.
+e) Select Book_ISBN, Title from relation Book, which written by more than 2
+Authors.
+
+ANS-->
+
+mysql> create table book(book_isbn int primary key,title varchar(50),publisher_name
+varchar(50),price int check(price>0),date_of_publication date,book_copy int);
+
+mysql> describe book;
+
+mysql> insert into book(book_isbn,title,publisher_name,price,date_of_publica
+tion,book_copy)values
+-> (1, 'Book1', 'Publisher1', 25.00, '2023-01-15', 50),
+-> (2,'Book2', 'Publisher2',40,'2022-07-20',40),
+-> (3, 'Book3', 'Publisher3', 20.00, '2021-05-10', 60),
+-> (4, 'Book4', 'Publisher1', 150, '2020-11-30', 35),
+-> (5, 'Book5', 'Publisher4', 180, '2019-09-25', 45);
+
+mysql> select * from book;
+
+mysql> create table book_author(book_isbn int ,author_name varchar(50),autho
+r_city varchar(50),primary key(book_isbn,author_name),foreign key(book_isbn)
+references book(book_isbn));
+
+mysql> describe book_author;
+
+mysql> insert into book_author(book_isbn,author_name,author_city)values
+-> (1,'author1','city1'),
+-> (2,'author2','city2'),
+-> (3,'author3','city3'),
+-> (4,'author4','city4'),
+-> (5,'author5','city5');
+
+mysql> select *from book_author;
+
+mysql> select B.book_isbn, B.title, BA.author_name from book B inner join bo
+ok_author BA on B.book_isbn = BA.book_isbn;
+
+mysql> select B.book_isbn, B.title,B.publisher_name, BA.author_name from book B left outer
+join book_author BA on B.book_isbn = BA.book_isbn;
+
+
+mysql> select B.book_isbn, B.title,B.publisher_name, BA.author_name from book B right outer
+join book_author BA on B.book_isbn = BA.book_isbn;
+
+
+mysql> select B.book_isbn,B.title
+-> from book B
+-> inner join book_author BA on B.book_isbn =BA.book_isbn
+-> where BA.author_city='city3';
+
+mysql> select b.book_isbn,b.title
+-> from book b
+-> inner join(
+-> select book_isbn
+-> from book_author
+-> group by book_isbn
+-> having count(*) > 2
+-> )ba on b.book_isbn = ba.book_isbn;
+
+*********************************************************************************
+PRACTICAL NO : 3
+
+ For the given Library database
+BOOK (Book_ISBN [PK], Title[Not Null], Publisher_ Name, price[Check Price&gt;0],
+Date_Of_Publication,Book_Copy ),
+BOOK_AUTHORS (Book_ISBN [PK,FK]Author_Name [PK], Author_City)
+Solve the followin
+
+i) Display name of publishers as per no of books published by them in
+ascending order.
+ii) Get publisher names who published at least one book written by author
+name like ‘K%’.
+iii) Get book name and Authors names where book written by maximum
+authors.
+iv) Get publisher names accordingly books published alphabetically
+
+Find the no of books published in 01 Jan 2014 to till date.
+
+mysql> create table books (Book_ISBN varchar(20), Title varchar(50), Publisher_Name
+varchar(50), price float, Date_Of_Publication date, Book_Copy int);
+
+mysql> describe table books;
+
+mysql> INSERT INTO BOOKs (Book_ISBN, Title, Publisher_Name, price, Date_Of_P
+ublication, Book_Copy)values
+-> ('ISBN1', 'Book Title 1', 'Publisher A', 15.99, '2023-01-01', 10),
+-> ('ISBN2', 'Book Title 2', 'Publisher B', 19.99, '2023-02-01', 12),
+-> ('ISBN3', 'Book Title 3', 'Publisher A', 12.99, '2023-03-01', 8),
+-> ('ISBN4', 'Book Title 4', 'Publisher C', 9.99, '2023-04-01', 14),
+-> ('ISBN5', 'Book Title 5', 'Publisher B', 14.99, '2023-05-01', 9);
+
+mysql> select * from books;
+
+mysql> create table BOOK_AUTHORS (Book_ISBN varchar(20), Author_Name varchar(20),
+Author_City varchar(20));
+
+
+mysql> describe table book_authors;
+
+
+mysql> INSERT INTO BOOK_AUTHORS (Book_ISBN, Author_Name, Author_City)values
+-> ('ISBN1', 'Author A', 'City A'),
+-> ('ISBN1', 'Author B', 'City B'),
+-> ('ISBN2', 'Author C', 'City C'),
+-> ('ISBN3', 'Author D', 'City A'),
+-> ('ISBN4', 'Author E', 'City D');
+
+mysql> describe table book_authors;
+
+mysql> select *from book_authors;
+
+mysql> SELECT Publisher_Name, COUNT(Book_ISBN) AS BooksPublished
+-> FROM BOOK
+-> GROUP BY Publisher_Name
+-> ORDER BY BooksPublished ASC;
+
+
+mysql> SELECT DISTINCT b.Publisher_Name
+-> FROM BOOK b
+-> INNER JOIN BOOK_AUTHORS ba ON b.Book_ISBN = ba.Book_ISBN
+-> WHERE ba.Author_Name LIKE 'k%';
+
+mysql> SELECT b.Title, GROUP_CONCAT(ba.Author_Name) AS Authors
+-> FROM BOOK b
+-> INNER JOIN BOOK_AUTHORS ba ON b.Book_ISBN = ba.Book_ISBN
+-> GROUP BY b.Title
+-> HAVING COUNT(ba.Author_Name) = (
+-> SELECT MAX(author_count)
+-> FROM (
+-> SELECT COUNT(Author_Name) AS author_count
+-> FROM BOOK_AUTHORS
+-> GROUP BY Book_ISBN
+-> ) AS counts
+-> );
+
+mysql> SELECT DISTINCT Publisher_Name
+-> FROM BOOKs
+-> ORDER BY Publisher_Name ASC;
+
+mysql> SELECT COUNT(*) AS BooksPublished
+-> FROM BOOKs
+-> WHERE Date_Of_Publication >= '2014-01-01';
+
+**************************************************************************************
+
+PRACTICAL NO : 4
+Consider insurance database with following schema :
+
+person(driver-id, name, address)
+car(license, model, year)
+
+accident (report - no, date, location)
+owns(driver-id,license)
+participated(driver-id,car,report-no,damage-amount)
+Write a query in SQL for following requirements :
+i) Find the total no. of people who owned cars that were involved in accidents in
+2016.
+ii) Retrieve the name of person whose address contains Pune.
+iii) Find the name of persons having more than two cars.
+
+
+mysql> create table person(driver_id int primary key, name varchar(50), addr
+ess varchar(50));
+
+mysql> describe table person;
+
+
+mysql> insert into person(driver_id,name,address) values
+-> (1, 'ram','pune'),
+-> (2, 'sham','nashik'),
+-> (3, 'rutvik','supe'),
+-> (4, 'aniket','baramati'),
+-> (5, 'shivtej','malegan');
+
+mysql> select * from person;
+
+mysql> create table car(license varchar(10) primary key, model varchar(20),year int);
+
+mysql> describe table car;
+
+mysql> insert into car(license,model,year)values
+-> ('ABC123', 'Toyota', 2018),
+-> ('XYZ456', 'Honda', 2019),
+-> ('DEF789', 'Ford', 2017),
+-> ('GHI101', 'Chevrolet', 2020),
+-> ('JKL202', 'BMW', 2016);
+
+mysql> select * from car;
+
+mysql> create table accident(report_no int primary key, date date, location
+varchar(50));
+
+mysql> describe table accident;
+
+mysql> insert into accident(report_no,date,location)values
+-> (1, '2016-05-10', 'Pune'),
+-> (2, '2016-08-20', 'Mumbai'),
+-> (3, '2016-11-15', 'Pune'),
+-> (4, '2017-01-25', 'Delhi'),
+-> (5, '2016-09-05', 'Pune');
+
+mysql> select * from accident;
+
+
+mysql> create table owns( driver_id int, license varchar(20), foreign key (driver_id) references
+person(driver_id),foreign key (license) references car(license), primary key (driver_id,license));
+
+mysql> describe table owns;
+
+mysql> insert into owns(driver_id,license) values
+-> (1, 'ABC123'),
+-> (2, 'XYZ456'),
+-> (3, 'DEF789'),
+-> (4, 'GHI101'),
+-> (5, 'JKL202');
+
+mysql> select * from owns
+
+
+mysql> create table participated(driver_id int, car_license varchar(50),repo
+rt_no int,damage_amount decimal(10,2),FOREIGN KEY (driver_id) REFERENCES
+person(driver_id),FOREIGN KEY (car_license) REFERENCES car(license),FOREIGN KEY
+(report_no) REFERENCES accident(report_no), PRIMARY KEY (driver_id, car_license,
+report_no));
+
+mysql> describe table participated;
+
+
+mysql> insert into participated(driver_id, car_license, report_no, damage_amount) values
+-> (1, 'ABC123', 1, 5000),
+-> (2, 'XYZ456', 2, 7000),
+-> (3, 'DEF789', 3, 3000),
+-> (4, 'GHI101', 4, 10000),
+-> (5, 'JKL202', 5, 1500);
+
+mysql> select * from participated;
+
+
+mysql> SELECT COUNT(DISTINCT p.driver_id) AS TotalPeople
+-> FROM person p
+-> JOIN owns o ON p.driver_id = o.driver_id
+-> JOIN car c ON o.license = c.license
+-> JOIN participated pd ON c.license = pd.car_license
+-> JOIN accident a ON pd.report_no = a.report_no
+-> WHERE YEAR(a.date) = 2016;
+
+mysql> SELECT name
+-> FROM person
+-> WHERE address LIKE '%Pune%';
+
+mysql> SELECT p.name
+-> FROM person p
+-> JOIN owns o ON p.driver_id = o.driver_id
+-> GROUP BY p.driver_id
+-> HAVING COUNT(o.license) > 2;
+
+
+**************************************************************************************
+PRACTICAL NO : 6
+
+For the given Employee database
+EmployeeInfo(EmpID[PK],EmpFname,EmpLname,Department,Project,Address,DOB,Ge
+nder)
+EmployeePosition(EmpID[FK],EmpPosition,DateOfJoining,Salary)
+i. Write a query to fetch the EmpFname from the EmployeeInfo table in
+the upper case and use the ALIAS name as EmpName.
+ii. Write a query to fetch the number of employees working in the
+department ‘HR’.
+iii. Write q query to find all the employees whose salary is between 50000
+to 100000
+iv. Write a query to find the names of employees that begin with ‘S’
+v. Write a query to fetch top N records.
+
+mysql> CREATE TABLE EmployeeInfo (EmpID INT PRIMARY KEY,EmpFname
+VARCHAR(50),EmpLname VARCHAR(50),Department VARCHAR(50),Project
+VARCHAR(50),Address VARCHAR(100), DOB DATE,Gender VARCHAR(10));
+
+mysql> INSERT INTO EmployeeInfo (EmpID, EmpFname, EmpLname, Department, Project,
+Address, DOB, Gender) VALUES
+-> (1, 'John', 'Doe', 'HR', 'Project A', ' Pune', '1990-05-15', 'Male'),
+-> (2, 'Alice', 'Smith', 'IT', 'Project B', ' Mumbai', '1988-09-20', 'Female'),
+-> (3, 'Bob', 'Johnson', 'HR', 'Project C', ' Pune', '1995-02-10', 'Male'),
+-> (4, 'Emily', 'Davis', 'Marketing', 'Project D', ' Delhi', '1992-11-30', 'Female'),
+-> (5, 'Michael', 'Wilson', 'IT', 'Project E', ' Pune', '1985-07-25', 'Male');
+
+
+mysql> CREATE TABLE EmployeePosition (EmpID INT PRIMARY KEY,EmpPosition
+VARCHAR(50),DateOfJoining DATE,Salary DECIMAL(10, 2), FOREIGN KEY (EmpID)
+REFERENCES EmployeeInfo(EmpID));
+
+mysql> INSERT INTO EmployeePosition (EmpID, EmpPosition, DateOfJoining, Salary)
+VALUES
+-> (1, 'Manager', '2015-03-10', 75000),
+-> (2, 'Developer', '2018-06-20', 65000),
+-> (3, 'HR Executive', '2019-01-15', 55000),
+-> (4, 'Marketing Specialist', '2017-08-05', 90000),
+-> (5, 'Software Engineer', '2016-02-28', 80000);
+
+mysql> SELECT UPPER(EmpFname) AS EmpName FROM EmployeeInfo
+
+mysql> SELECT COUNT(*) AS EmployeesInHR FROM EmployeeInfo WHERE Department =
+'HR';
+
+mysql> SELECT EmpFname FROM EmployeeInfo ei JOIN EmployeePosition ep ON ei.EmpID
+= ep.EmpID WHERE ep.Salary BETWEEN 50000 AND 100000;
+
+
+mysql> SELECT EmpFname FROM EmployeeInfo WHERE EmpFname LIKE 'b%';
+
+
+mysql> SELECT * FROM EmployeeInfo LIMIT 1;
+
+**********************************************************************************
+PRACTICAL NO : 27
+Create a table named STUDENT with the following fields : 20 (FIRST NAME, MIDDLE NAME,
+LAST
+NAME, STUDENT_ENRLNO, DATE_OF_BIRTH, CLASS, SECTION, GENDER, YEAR_OF
+JOIN,
+ADMISSION_NO, ADDRESS1, ADDRESS2, CITY, STATE, RESPHONE, PIN_CODE)
+(a) Display all the list of students who are in class - 6, section - A.
+(b) To display all the students list whose first name starts with &quot;A&quot;.
+(c) To display all the students list who are girls.
+(d) To display all the students whose YEAR-OF-JOIN is 2000.
+(e) Sort the records of students with respect to their ADMISSION_NO, in ascending order.
+
+mysql> CREATE TABLE STUDENT( FIRST_NAME VARCHAR(50),MIDDLE_NAME
+VARCHAR(50), LAST_NAME VARCHAR(50),STUDENT_ENRLNO INT, DATE_OF_BIRTH
+DATE,CLASS INT,SECTION VARCHAR(10),GENDER VARCHAR(10),YEAR_OF_JOIN INT,
+ADMISSION_NO INT, ADDRESS1 VARCHAR(100), ADDRESS2 VARCHAR(100), CITY
+VARCHAR(50), STATE VARCHAR(50), RESPHONE VARCHAR(15),PIN_CODE
+VARCHAR(10));
+
+mysql> INSERT INTO STUDENT (FIRST_NAME, MIDDLE_NAME, LAST_NAME,
+STUDENT_ENRLNO, DATE_OF_BIRTH, CLASS, SECTION, GENDER, YEAR_OF_JOIN,
+ADMISSION_NO, ADDRESS1, ADDRESS2, CITY, STATE, RESPHONE, PIN_CODE)VALUES
+-> ('Alice', 'Marie', 'Smith', 1, '2008-05-15', 6, 'A', 'Female', 2000, 1001, '123 Main St', 'Apt
+101', 'City1', 'State1', '1234567890', '12345'),
+-> ('Bob', 'Alexander', 'Johnson', 2, '2007-08-20', 7, 'B', 'Male', 2001, 1002, '456 Elm St', 'Apt
+202', 'City2', 'State2', '2345678901', '23456'),
+-> ('Anna', 'Grace', 'Williams', 3, '2009-01-10', 6, 'A', 'Female', 2000, 1003, '789 Oak St', 'Apt
+303', 'City3', 'State3', '3456789012', '34567'),
+-> ('Alex', 'James', 'Brown', 4, '2008-11-28', 6, 'B', 'Male', 2000, 1004, '012 Pine St', 'Apt 404',
+'City4', 'State4', '4567890123', '45678'),
+-> ('Ava', 'Rose', 'Miller', 5, '2009-03-05', 5, 'A', 'Female', 2002, 1005, '345 Cedar St', 'Apt 505',
+'City5', 'State5', '5678901234', '56789');
+
+mysql> SELECT * FROM STUDENT
+-> WHERE CLASS = 6 AND SECTION = 'A';
+
+mysql> SELECT * FROM STUDENT
+-> WHERE FIRST_NAME LIKE 'A%';
+
+mysql> SELECT * FROM STUDENT
+-> WHERE GENDER ='FEMALE';
+
+mysql> SELECT * FROM STUDENT
+-> WHERE YEAR_OF_JOIN='2000';
+
+mysql> SELECT * FROM STUDENT
+-> ORDER BY ADMISSION_NO ASC;
+
+**************************************************************************************
+
+PRACTICAL NO : 28
+Create the following table CATALOG with the following fields : (BOOK ID, BOOK TITLE,
+AUTHOR,
+AUTHOR_ID, PUBLISHER_ID, CATEGORY_ID, YEAR, ISBN, PRICE)
+(a) To display all the books of the CATEGORY_ID : COMPUTERS;.
+(b) List all the books whose PRICE is greater than or equal to 1000/-.
+(c) List all the books whose AUTHOR is ‘Tata McGraw-Hill;.
+(d) List all the books whose YEAR of publication is 2013.
+(e) List all the BOOK_TITLEs whose AUTHOR_ID is 123;
+
+mysql> create table catalog(book_id int, book_title varchar(50), author varchar(50), author_id int
+, publisher_id varchar(10),category_id varchar(10), year int,isbn varchar(10), price
+decimal(10,2));
+
+mysql> insert into catalog(book_id , book_title , author , author_id , publisher_id ,category_id ,
+year ,isbn , price)values
+-> (1,'dsa','ram',101,'ch1234','computer', 2012,'1234567890',123.45);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into catalog(book_id , book_title , author , author_id , publisher_id ,category_id ,
+year ,isbn , price)values
+-> (2,'oop','sham',102,'ch1235','computer', 2013,'5134677890',156.45);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into catalog(book_id , book_title , author , author_id , publisher_id ,category_id ,
+year ,isbn , price)values
+-> (3,'java','tata mc graw hill',103,'ch1236','civil', 2014,'9190703890',56.45);
+Query OK, 1 row affected (0.00 sec)
+mysql> insert into catalog(book_id , book_title , author , author_id , publisher_id ,category_id ,
+year ,isbn , price)values
+-> (4,'python','parth',104,'ch1237','mechanical', 2013,'5640703890',586.45);
+
+
+mysql> select * from catalog
+-> where category_id ='computer';
+
+mysql> select * from catalog
+-> where price >= 400;
+
+mysql> select * from catalog
+-> where author ='tata mc graw hill';
+
+mysql> select * from catalog
+-> where year = 2013;
+
+mysql> select * from catalog
+
+
+
